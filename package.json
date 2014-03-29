@@ -19,7 +19,9 @@
   "license": "MIT",
   "dependencies": {
     "express": "^3.5.1",
-    "socket.io": "^0.9.16"
+    "socket.io": "^0.9.16",
+    "airtunes": "^0.1.6",
+    "spotify-web": "^1.1.0"
   },
   "devDependencies": {
     "gulp-coffee": "^1.4.1",
