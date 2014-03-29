@@ -21,7 +21,8 @@
     "express": "^3.5.1",
     "socket.io": "^0.9.16",
     "airtunes": "^0.1.6",
-    "spotify-web": "^1.1.0"
+    "spotify-web": "^1.1.0",
+    "lame": "^1.0.3"
   },
   "devDependencies": {
     "gulp-coffee": "^1.4.1",
@@ -30,6 +31,7 @@
     "mocha": "~1.17.1",
     "should": "~3.1.2",
     "gulp-mocha": "^0.4.1",
-    "gulp-less": "^1.2.3"
+    "gulp-less": "^1.2.3",
+    "speaker": "0.0.10"
   }
 }

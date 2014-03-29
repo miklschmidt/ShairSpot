@@ -4,6 +4,9 @@
 <title>Mediaplayer v0.1.1</title>
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css" type="text/css" />
 <link rel="stylesheet" href="/css/app.css" type="text/css" />
+<script src="//code.jquery.com/jquery-2.1.0.js"></script>
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/js/bootstrap.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 	<div class="navbar navbar-fixed-top">
@@ -87,6 +90,27 @@
 		</div>
 	</div>
 </div>
+<!-- LOGIN BOX -->
+<div class="modal hide fade" id="login-modal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Login to spotify</h3>
+  </div>
+  <div class="modal-body">
+  	<div class="">
+   	<input id="username" class="" type="text">
+   	</div>
+   	<div class="">
+   	<input id="password" class="" type="password">
+   </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn">Close</a>
+    <a href="#" class="btn btn-primary" id="login-button">Login</a>
+  </div>
+</div>
+<!-- END LOGIN BOX -->
 <audio controls id="audio" src=""></audio>
+<script src="/js/app.js"></script>
 </body>
 </html>
