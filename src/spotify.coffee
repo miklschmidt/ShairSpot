@@ -1,6 +1,6 @@
 Spotify = require 'spotify-web'
-Speaker = require 'speaker'
 lame = require 'lame'
+airtunes = require 'airtunes'
 
 module.exports = class SpotifyClient
 
@@ -40,7 +40,7 @@ module.exports = class SpotifyClient
 				return @handleError(err, spotify) if err
 				track.play()
 				.pipe new lame.Decoder()
-				.pipe new Speaker()
+				.pipe airtunes
 				.on 'finish', () -> spotify.disconnect()
 
 
