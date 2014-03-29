@@ -19,9 +19,6 @@ module.exports.initialize = (io, app) ->
 
 			io.sockets.on 'connection', @clientConnect
 
-		getUserRoom: (userID) ->
-			return io.sockets.in(userID)
-
 		getUserSockets: () ->
 			return io.sockets.clients('users')
 
