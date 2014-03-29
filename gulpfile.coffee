@@ -17,25 +17,13 @@ gulp.task 'client-less', ->
 	.pipe less()
 	.pipe gulp.dest './public/css'
 
-gulp.task 'client-less-move', ->
-	gulp.src './client/less/**/!(*.less)'
-	.pipe gulp.dest './public/css'
-
 gulp.task 'client-coffee', ->
 	gulp.src './client/coffee/*.coffee'
 	.pipe coffee()
 	.pipe gulp.dest './public/js'
 
-gulp.task 'client-coffee-move', ->
-	gulp.src './client/coffee/**/!(*.coffee)'
-	.pipe gulp.dest './public/js'
-
-gulp.task 'client-img-move', ->
-	gulp.src './client/img/**/*'
-	.pipe gulp.dest './public/img'
-
 gulp.task 'client-move', ->
-	gulp.src ['./client/**/*', './client/!(coffee)', './client/!(less)']
+	gulp.src ['./client/*.*', './client/!(coffee|less)/**/*']
 	.pipe gulp.dest './public'
 
 gulp.task 'server-coffee', ->
