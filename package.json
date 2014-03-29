@@ -1,0 +1,33 @@
+{
+  "name": "ShairSpot",
+  "version": "0.0.1",
+  "description": "A project for collaboratively streaming spotify content to airplay speakers.",
+  "main": "index",
+  "keywords": [],
+  "author": {
+    "name": "Mikkel Schmidt",
+    "email": "mikkel.schmidt@gmail.com"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/miklschmidt/ShairSpot.git"
+  },
+  "bugs": "http://github.com/miklschmidt/ShairSpot/issues",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^3.5.1",
+    "socket.io": "^0.9.16"
+  },
+  "devDependencies": {
+    "gulp-coffee": "^1.4.1",
+    "gulp": "^3.5.2",
+    "coffee-script": "^1.7.1",
+    "mocha": "~1.17.1",
+    "should": "~3.1.2",
+    "gulp-mocha": "^0.4.1",
+    "gulp-less": "^1.2.3"
+  }
+}
