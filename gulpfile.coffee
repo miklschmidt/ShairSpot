@@ -27,7 +27,7 @@ gulp.task 'client-move', ->
 	.pipe gulp.dest './public'
 
 gulp.task 'server-coffee', ->
-	gulp.src './src/*.coffee'
+	gulp.src './src/**/*.coffee'
 	.pipe coffee()
 	.pipe gulp.dest './lib'
 

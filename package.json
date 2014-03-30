@@ -22,7 +22,9 @@
     "socket.io": "^0.9.16",
     "airtunes": "^0.1.6",
     "spotify-web": "^1.1.0",
-    "lame": "^1.0.3"
+    "lame": "^1.0.3",
+    "backbone.io": "^0.4.1",
+    "node.extend": "^1.0.10"
   },
   "devDependencies": {
     "gulp-coffee": "^1.4.1",

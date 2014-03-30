@@ -32,6 +32,7 @@ module.exports.initialize = (io, app) ->
 			# console.log 'client connected'
 			client = new SocketClient
 			client.initialize socket, @
+			socket.set 'client', client
 			@emit 'connection', client
 
 	class SocketClient
