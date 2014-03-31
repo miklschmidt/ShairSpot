@@ -15,14 +15,35 @@ define [
 		playtime: 0
 		initialize: () ->
 			super
-			@listenTo @model, 'change', @updateTrack
+			@listenTo @model, 'change', @updatePlayer
 			@delegate 'click', '.play', @play
 			@delegate 'click', '.pause', @pause
+			@delegate 'click', '#volume .progress_container', @volumeChangeHandler
+			mediator.setHandler 'volume', @volumeHandler
+
+		volumeHandler: (vol) ->
+			if vol
+				@setVolume vol
+				mediator.socket.emit('player:volume', volume)
+			else
+				return vol
+
+		volumeChangeHandler: (e) ->
+			bg = $('#volume .progress_background')
+			offset = bg.offset()
+			value = e.pageX - offset.left
+			volume = value/bg.width() * 100
+			@setVolume volume
+			mediator.socket.emit('player:volume', volume)
+
+		setVolume: (volume) ->
+			@$('#volume .progress_bar').css('width', volume + '%')
+
 
 		play: (update = yes) ->
 			if update
 				@model.save {playing: yes}, silent: true, success: () =>
-					@updateTrack()
+					@updatePlayer()
 			@$('.play').hide()
 			@$('.pause').show()
 
@@ -38,10 +59,10 @@ define [
 			progress = (@model.get('playtime')*1000) / @model.get('track').duration
 			progress *= 100
 			progress = 100 if progress > 100
-			@$('#progress_bar').css('width', progress + '%')
+			@$('#play-progress .progress_bar').css('width', progress + '%')
 			@$('#current_duration').text "#{cur} / #{total}"
 
-		updateTrack: () ->
+		updatePlayer: () ->
 			if @model.get('playing')
 				@play(false)
 			else if not @model.get('playing')
@@ -50,5 +71,7 @@ define [
 			title = @model.get('track').title
 			artist = @model.get('track').artist
 			user = @model.get('track').user
+			volume = @model.get('volume')
+			@setVolume volume if volume?
 			@$('#currently_playing').text "#{artist} - #{title} (for #{user})"
 			@setDuration()

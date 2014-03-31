@@ -1,7 +1,8 @@
 define [
+	'chaplin'
 	'views/base/view'
 	'hbs!templates/device'
-], (View, tmpl) ->
+], ({mediator}, View, tmpl) ->
 
 	class DeviceView extends View
 
@@ -10,12 +11,15 @@ define [
 
 		initialize: () ->
 			super
-			@listenTo @model, 'change:active', @render
+			@listenTo @model, 'change', @render
 			@delegate 'click', () ->
 				@model.set('active', not @model.get('active'), {silent: true})
+				@model.set('volume', mediator.execute('volume'))
 				@$('.status').removeClass('active inactive').addClass('syncing').find('i').attr('class', 'icon-cycle spin')
 				@model.save({active: @model.get('active')})
 
 		getTemplateData: () ->
 			data = super
+			debugger
 			data
+

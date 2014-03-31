@@ -1,3 +1,6 @@
+airtunes = require 'airtunes'
+airtunesDevices = require 'airtunes/lib/devices'
+
 module.exports = (player, queueControl) ->
 
 	class Player
@@ -6,6 +9,8 @@ module.exports = (player, queueControl) ->
 		currentStream: null
 		playtime: 0
 		playtimeInterval: null
+		volume: 25
+
 		constructor: (@playing = no) ->
 
 		play: () ->
@@ -18,7 +23,7 @@ module.exports = (player, queueControl) ->
 				client = queueControl.getClientFor @track.id
 				queueControl.markAsPlaying(0)
 				@playing = yes
-				client.spotify.play @track.uri, (currentStream) => 
+				client.spotify.play @track.uri, (currentStream) =>
 					@playtime = 0
 					@playtimeInterval = setInterval () =>
 						@playtime++
@@ -34,6 +39,12 @@ module.exports = (player, queueControl) ->
 				@playtime = 0
 				player.emit 'updated', @serialize()
 
+		setVolume: (vol) =>
+			@volume = vol
+			player.emit 'updated', @serialize()
+			airtunesDevices.forEach (device) ->
+				device.setVolume vol
+
 		stop: () ->
 			if @currentStream
 				@playing = no
@@ -44,7 +55,7 @@ module.exports = (player, queueControl) ->
 			@play() if @playing
 
 		serialize: () ->
-			{id: 1, playing: audioPlayer.playing, track: audioPlayer.track, playtime: @playtime}
+			{id: 1, @playing, @track, @playtime, @volume}
 
 	audioPlayer = new Player()
 
@@ -65,3 +76,5 @@ module.exports = (player, queueControl) ->
 	player.use 'delete', (req, res, next) ->
 		console.log 'player#delete'
 		return next(new Error("Can't delete players"))
+
+	return audioPlayer

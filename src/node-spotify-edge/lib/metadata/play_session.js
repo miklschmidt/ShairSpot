@@ -34,7 +34,7 @@ function PlaySession(track, args) {
   this.aborted = false;
   this.ended = false;
   this.stream = new PassThrough();
-  this.lid = args.lid || null; 
+  this.lid = args.lid || null;
   this.tid = args.tid || null;
   this.type = args.type || null;
   this.uri = args.uri || null;
@@ -81,15 +81,15 @@ PlaySession.prototype.play = function(fn) {
 
   var self = this;
   var spotify = this._track._spotify;
-  var stream = this.stream; 
+  var stream = this.stream;
 
   var callback = function(err, data) {
     if (err && ('function' != typeof fn || ('function' == typeof fn && fn.length == 1))) {
-      process.nextTick(self.emit.bind(self, 'error', err)); 
+      process.nextTick(self.emit.bind(self, 'error', err));
       process.nextTick(stream.emit.bind(stream, 'error', err));
     } else if ('function' == typeof fn) {
       return fn(err, data);
-    } 
+    }
     if ('function' == typeof fn) fn(data);
   };
 
@@ -104,7 +104,7 @@ PlaySession.prototype.play = function(fn) {
   }
 
   this._started = true;
-  
+
   // if a song was playing before this, the "track_end" command needs to be sent
   var session = spotify.currentPlaySession;
   if (session && !session.ended) session.end();
@@ -118,6 +118,9 @@ PlaySession.prototype.play = function(fn) {
     .set({ 'User-Agent': spotify.userAgent })
     .end()
     .request();
+  this._req.on("error", function(err){
+    console.log("REQ ERROR", err);
+  });
   this._req.on('response', function(res) {
     debug('HTTP/%s %s', res.httpVersion, res.statusCode);
     if (res.statusCode == 200) {
@@ -144,7 +147,7 @@ PlaySession.prototype.play = function(fn) {
  * @api public
  */
 
-PlaySession.prototype.end = function (ms, fn) {  
+PlaySession.prototype.end = function (ms, fn) {
   // argument surgery
   if ('function' == typeof ms) {
     fn = ms;

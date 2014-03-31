@@ -10,6 +10,7 @@ sockets  = require './sockets'
 Spotify  = require './spotify'
 backboneio = require 'backbone.io'
 memoryStore = require './memory-store'
+airtunes = require 'airtunes'
 
 ###
 # Config
@@ -29,7 +30,7 @@ app.use express.static publicDir
 app.get '/', (req, res) ->
 	res.send fs.readFileSync path.join(publicDir, 'index.html'), 'utf8'
 
-### 
+###
 # Airplay
 ###
 
@@ -50,7 +51,7 @@ queueControl = require('./queue')(queue)
 ###
 
 player = backboneio.createBackend()
-require('./player')(player, queueControl)
+playerControl = require('./player')(player, queueControl)
 
 ###
 # Socket setup
@@ -60,6 +61,8 @@ io = backboneio.listen server, {airplay, queue, player}
 sockets.initialize io, app
 sockets.server.on 'connection', (client) ->
 	client.spotify = new Spotify(sockets.server, client)
+	client.socket.on 'player:volume', (vol) ->
+		playerControl.setVolume vol
 
 ###
 # Start server
@@ -67,3 +70,9 @@ sockets.server.on 'connection', (client) ->
 
 server.listen 1337
 console.log 'server running on port 1337'
+
+process.on 'uncaughtException', (err) ->
+	console.log 'UNCAUGHT', err
+
+airtunes.on 'error', (err) ->
+	console.log 'AIRTUNES ERROR:', err

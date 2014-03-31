@@ -163,7 +163,7 @@ ul {
 			font-size: 12px;
 		}
 		&:hover {
-			text-shadow: -1px -1px 0px rgba(255,255,255,0.1), 1px 1px 0px rgba(0,0,0, 0.4);	
+			text-shadow: -1px -1px 0px rgba(255,255,255,0.1), 1px 1px 0px rgba(0,0,0, 0.4);
 		}
 	}
 	.nav-collapse {
@@ -207,20 +207,20 @@ ul {
 				display: none;
 			}
 		}
-		#progress {
+		.progress_container {
 			height: 30px;
 			padding: 0px 10px;
 			border-left: 1px solid @black_border_light;
 			border-right: 1px solid @black_socket;
-			margin: 0px 61px 0px 81px;
-			#progress_wrapper {
+			margin: 0px 163px 0px 81px;
+			.progress_wrapper {
 				width: 100%;
 				top: 8px;
 				height: 20px;
 				background: none;
 				position: relative;
 			}
-			#progress_background {
+			.progress_background {
 				height: 10px;
 				position: absolute;
 				top: 2px;
@@ -233,7 +233,7 @@ ul {
 				border-top: 1px solid @black_socket;
 				// box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2), inset 0px 1px 2px rgba(0,0,0,0.5)
 			}
-			#progress_bar {
+			.progress_bar {
 				height: 6px;
 				position: absolute;
 				top: 4px;
@@ -268,6 +268,31 @@ ul {
 			.repeat_on {
 				display: none;
 			}
+		}
+		#volume {
+			.progress_container {
+				margin: 0px 0px 0px 25px;
+				padding: 0;
+				width: ~"calc(100% - 25px)";
+				border-right: none;
+				border-left: none;
+				.progress_bar {
+					-webkit-transition: none;
+					transition: none;
+				}
+			}
+			i {
+				position: relative;
+				top: 11px;
+				float: left;
+				margin-left: 4px;
+			}
+			border-left: 1px solid @black_socket;
+			float: right;
+			height: 30px;
+			width: 100px;
+			text-align: right;
+			border-right: none;
 		}
 	}
 }

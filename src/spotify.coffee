@@ -24,12 +24,12 @@ module.exports = class SpotifyClient
 				{@username, @password} = credentials
 				User.get spotify, @username, (err, user) =>
 					return @handleError err, spotify, callback if err
-					# return spotify.disconnect() if err
+					# return @disconnect(spotify) if err
 					user.get (err, user) =>
 						return @handleError err, spotify, callback if err
 						@client.set 'username', (user.fullName or user.username)
 						callback()
-						spotify.disconnect()
+						@disconnect(spotify)
 
 	login: (callback) ->
 		try
@@ -43,6 +43,12 @@ module.exports = class SpotifyClient
 		catch e
 			callback e
 
+	disconnect: (spotify) ->
+		try
+			spotify.disconnect()
+		catch e
+			@handleError e, spotify
+
 	handleError: (err, spotify, callback) ->
 		@client.socket.emit 'error', err.toString()
 		spotify?.disconnect()
@@ -51,28 +57,38 @@ module.exports = class SpotifyClient
 	getMetaData: (trackURI, callback) ->
 		@login (err, spotify) =>
 			return @handleError err, spotify, callback if err
-			spotify.get trackURI, (err, track) ->
-				return @handleError err, spotify, callback if err
-				spotify.disconnect()
-				callback err, track
-
-	userInfo: (username, callback) ->
-
+			try
+				spotify.get trackURI, (err, track) =>
+					return @handleError err, spotify, callback if err
+					@disconnect(spotify)
+					callback err, track
+			catch e
+				callback e
 
 	play: (uri, callback, endCallback) ->
-		@login (err, spotify) =>
-			return @handleError(err, spotify, endCallback) if err
-
-			spotify.get uri, (err, track) =>
+		try
+			@login (err, spotify) =>
 				return @handleError(err, spotify, endCallback) if err
-				stream = track.play()
-				.pipe new lame.Decoder()
-				.on 'finish', () ->
-					stream.unpipe airtunes # prevent airtunes buffer from ending
-					spotify.disconnect()
-					endCallback()
-				stream.pipe airtunes
-				callback(stream)
+				try
+					spotify.get uri, (err, track) =>
+						return @handleError(err, spotify, endCallback) if err
+						try
+							stream = track.play()
+							.on 'error', (err) =>
+								@handleError(err, spotify, endCallback)
+							.pipe new lame.Decoder()
+							.on 'finish', () =>
+								stream.unpipe airtunes # prevent airtunes buffer from ending
+								@disconnect(spotify)
+								endCallback()
+							stream.pipe airtunes
+							callback(stream)
+						catch e
+							return @handleError(e, spotify, endCallback) if err
+				catch e
+					@play uri, callback, endCallback
+		catch e
+			@play uri, callback, endCallback
 
 
 
