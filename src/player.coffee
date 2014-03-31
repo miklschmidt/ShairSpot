@@ -29,6 +29,10 @@ module.exports = (player, queueControl) ->
 					clearInterval @playtimeInterval
 					@currentStream = null
 					@next()
+			else
+				@playing = no
+				@playtime = 0
+				player.emit 'updated', @serialize()
 
 		stop: () ->
 			if @currentStream

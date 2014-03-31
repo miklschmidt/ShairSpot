@@ -16,15 +16,38 @@ define [
 				e.preventDefault()
 				e.stopPropagation()
 				for item in e.originalEvent.dataTransfer.items
-					item.getAsString (string) =>
-						if string.indexOf('spotify:track') isnt -1
-							@collection.create {uri: string}
+					if item.type is 'text/uri-list'
+						item.getAsString (string) =>
+							if string.indexOf('\n') isnt -1
+								# Collection of uris
+								uris = string.split('\n')
+								for uri in uris
+									uri = uri.replace('\r', '').replace('\n', '')
+									console.log uri
+									@parseSpotifyUri uri
+							else
+								@parseSpotifyUri string
 				
-				$("#drop_area").text("Spotify drag 'n droperino area")
+				$("#drop_area").text("Spotify drag 'n dropperino area")
 
 			@delegate "dragover", "#drop_area", (e) ->
 				e.preventDefault()
 				$("#drop_area").text("Add to queue")
 
 			@delegate "dragleave", "#drop_area", (e) ->
-				$("#drop_area").text("Spotify drag 'n droperino area")
+				$("#drop_area").text("Spotify drag 'n dropperino area")
+
+		parseSpotifyUri: (string) ->
+			if string.indexOf('http://open.spotify.com/track/') isnt -1
+				uri = 'spotify:track:' + string.replace('http://open.spotify.com/track/', '')
+				more = uri.indexOf('http://open.spotify.com/track/')
+				if more > -1
+					realuri = uri.substring(0,more)
+					rest = uri.replace(realuri, '')
+					@parseSpotifyUri rest
+					uri = realuri
+				console.log 'adding', uri
+				@collection.create {uri}
+			else if string.indexOf('spotify:track') isnt -1
+				console.log 'adding', string
+				@collection.create {uri: string}

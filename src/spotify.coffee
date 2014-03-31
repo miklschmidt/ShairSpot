@@ -38,7 +38,7 @@ module.exports = class SpotifyClient
 			callback new Error("No login credentials specified")
 		else
 			Spotify.login @username, @password, (err, spotify) ->
-				console.log err if err
+				return @handleError err, spotify if err
 				callback err, spotify
 
 	handleError: (err, spotify) ->
@@ -47,7 +47,9 @@ module.exports = class SpotifyClient
 
 	getMetaData: (trackURI, callback) ->
 		@login (err, spotify) ->
+			return @handleError err, spotify if err
 			spotify.get trackURI, (err, track) ->
+				return @handleError err, spotify if err
 				spotify.disconnect()
 				callback err, track
 

@@ -27,4 +27,6 @@ define [
 
 		initMediator: () ->
 			Chaplin.mediator.socket = backboneio.connect()
+			Chaplin.mediator.socket.on 'error', (err) ->
+				console.log 'ERROR:', err
 			super
