@@ -8,11 +8,10 @@ Connection = require './node-spotify-edge/lib/connection/connection'
 
 module.exports = class SpotifyClient
 
-	username: null
-	password: null
-
 	constructor: (@sockets, @client) ->
 		@setupEvents()
+		@username = null
+		@password = null
 
 	setupEvents: () ->
 		@client.socket.on 'login', @setLogin.bind @
@@ -28,18 +27,21 @@ module.exports = class SpotifyClient
 					# return spotify.disconnect() if err
 					user.get (err, user) =>
 						return @handleError err, spotify, callback if err
-						@client.set 'username', user.fullName
+						@client.set 'username', (user.fullName or user.username)
 						callback()
 						spotify.disconnect()
 
 	login: (callback) ->
-		unless @username and @password
-			@client.socket.emit 'invalid-login'
-			callback new Error("No login credentials specified")
-		else
-			Spotify.login @username, @password, (err, spotify) =>
-				return @handleError err, spotify, callback if err
-				callback err, spotify
+		try
+			unless @username and @password
+				@client.socket.emit 'invalid-login'
+				callback new Error("No login credentials specified")
+			else
+				Spotify.login @username, @password, (err, spotify) =>
+					return @handleError err, spotify, callback if err
+					callback err, spotify
+		catch e
+			callback e
 
 	handleError: (err, spotify, callback) ->
 		@client.socket.emit 'error', err.toString()
@@ -65,10 +67,11 @@ module.exports = class SpotifyClient
 				return @handleError(err, spotify, endCallback) if err
 				stream = track.play()
 				.pipe new lame.Decoder()
-				stream.pipe new Speaker()
-				.on 'finish', () -> 
+				.on 'finish', () ->
+					stream.unpipe airtunes # prevent airtunes buffer from ending
 					spotify.disconnect()
 					endCallback()
+				stream.pipe airtunes
 				callback(stream)
 
 

@@ -32,14 +32,14 @@ module.exports = (backend, db) ->
 		console.log 'airplay#update'
 		clientModel = req.model
 		model = db.getModel(clientModel.id)
-		
+
 		return next new Error("No such model") unless model
 
 		if clientModel.active is yes
-			deviceConnections[model.id] = airtunes.add model.host, {port: model.port, volume: clientModel.volume or 10}
+			deviceConnections[model.id] = airtunes.add model.host, {port: model.port, volume: clientModel.volume or 20}
 			model.active = yes
 			next()
-			deviceConnections[model.id].on 'status', (status) -> 
+			deviceConnections[model.id].on 'status', (status) ->
 				console.log status
 				if status is 'ready'
 					model.active = yes
@@ -47,7 +47,7 @@ module.exports = (backend, db) ->
 					model.active = no
 				backend.emit 'updated', model
 
-			deviceConnections[model.id].on 'error', (error) -> 
+			deviceConnections[model.id].on 'error', (error) ->
 				console.log error
 				model.active = no
 				backend.emit 'updated', model

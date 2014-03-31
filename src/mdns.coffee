@@ -13,19 +13,20 @@ module.exports = {
 				callback null, devices
 			lines = stdout.split('\n')
 			for line in lines
-				result = /_raop\._tcp\.\s+([^@]+)@(.*)/.exec line
-				# return callback new Error('no devices') unless result
-				continue unless result
-				n++
-				device = mac: result[1], name: result[2]
+				do (line) ->
+					result = /_raop\._tcp\.\s+([^@]+)@(.*)/.exec line
+					# return callback new Error('no devices') unless result
+					return unless result
+					n++
+					device = mac: result[1], name: result[2]
 
-				cmd = "#{mdnsbin} -L \"#{device.mac}@#{device.name}\" _raop._tcp local"
-				exec cmd, {timeout: 1000}, (err, stdout) ->
-					
-					result = /can be reached at\s+(\S*)\s*:(\d+)/.exec stdout
-					if result
-						device.host = result[1]
-						device.port = result[2]
-						devices.push device
-					--n or done()
+					cmd = "#{mdnsbin} -L \"#{device.mac}@#{device.name}\" _raop._tcp local"
+					exec cmd, {timeout: 1000}, (err, stdout) ->
+
+						result = /can be reached at\s+(\S*)\s*:(\d+)/.exec stdout
+						if result
+							device.host = result[1]
+							device.port = result[2]
+							devices.push device
+						--n or done()
 }
