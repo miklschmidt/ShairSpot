@@ -20,6 +20,5 @@ define [
 
 		getTemplateData: () ->
 			data = super
-			debugger
 			data
 
