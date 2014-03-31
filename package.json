@@ -17,6 +17,7 @@
   },
   "bugs": "http://github.com/miklschmidt/ShairSpot/issues",
   "license": "MIT",
+  "//": "node-spotify-web (WIP refactored branch deps) is after the linebreak",
   "dependencies": {
     "express": "^3.5.1",
     "socket.io": "^0.9.16",
@@ -24,7 +25,18 @@
     "spotify-web": "^1.1.0",
     "lame": "^1.0.3",
     "backbone.io": "^0.4.1",
-    "node.extend": "^1.0.10"
+    "node.extend": "^1.0.10",
+
+    "cheerio": "~0.10.5",
+    "debug": "~0.7.0",
+    "protobufjs": "~2.0.0-rc2",
+    "superagent": "~0.12.0",
+    "ws": "~0.4.25",
+    "readable-stream": "~0.2.0"
+  },
+  "//": "node-spotify-web (WIP refactored branch optional deps)",
+  "optionalDependencies": {
+    "protobuf": "~0.8.6"
   },
   "devDependencies": {
     "gulp-coffee": "^1.4.1",
