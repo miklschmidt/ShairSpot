@@ -47,7 +47,7 @@ define [
 					@parseSpotifyUri rest
 					uri = realuri
 				console.log 'adding', uri
-				@collection.create {uri}
+				@collection.create {uri}, {wait: true}
 			else if string.indexOf('spotify:track') isnt -1
 				console.log 'adding', string
-				@collection.create {uri: string}
+				@collection.create {uri: string}, {wait: true}

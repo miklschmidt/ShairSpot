@@ -10,7 +10,8 @@ module.exports = (backend, db) ->
 	backend.use 'create', (req, res, next) ->
 		spotify = req.socket.store.data.client.spotify
 		spotify.getMetaData req.model.uri, (err, track) ->
-			console.log err if err
+			if err
+				return next(err)
 			# TODO err handling
 			artists = (artist.name for artist in track.artist)
 			req.model.artist = artists.join ', '

@@ -24,10 +24,10 @@ module.exports = class SpotifyClient
 			else
 				{@username, @password} = credentials
 				User.get spotify, @username, (err, user) =>
-					return @handleError err, spotify if err
+					return @handleError err, spotify, callback if err
 					# return spotify.disconnect() if err
 					user.get (err, user) =>
-						return @handleError err, spotify if err
+						return @handleError err, spotify, callback if err
 						@client.set 'username', user.fullName
 						callback()
 						spotify.disconnect()
@@ -37,19 +37,20 @@ module.exports = class SpotifyClient
 			@client.socket.emit 'invalid-login'
 			callback new Error("No login credentials specified")
 		else
-			Spotify.login @username, @password, (err, spotify) ->
-				return @handleError err, spotify if err
+			Spotify.login @username, @password, (err, spotify) =>
+				return @handleError err, spotify, callback if err
 				callback err, spotify
 
-	handleError: (err, spotify) ->
-		@client.emit 'error', err
-		spotify.disconnect()
+	handleError: (err, spotify, callback) ->
+		@client.socket.emit 'error', err.toString()
+		spotify?.disconnect()
+		callback? err
 
 	getMetaData: (trackURI, callback) ->
-		@login (err, spotify) ->
-			return @handleError err, spotify if err
+		@login (err, spotify) =>
+			return @handleError err, spotify, callback if err
 			spotify.get trackURI, (err, track) ->
-				return @handleError err, spotify if err
+				return @handleError err, spotify, callback if err
 				spotify.disconnect()
 				callback err, track
 
@@ -58,10 +59,10 @@ module.exports = class SpotifyClient
 
 	play: (uri, callback, endCallback) ->
 		@login (err, spotify) =>
-			return @handleError(err, spotify) if err
+			return @handleError(err, spotify, endCallback) if err
 
 			spotify.get uri, (err, track) =>
-				return @handleError(err, spotify) if err
+				return @handleError(err, spotify, endCallback) if err
 				stream = track.play()
 				.pipe new lame.Decoder()
 				stream.pipe new Speaker()
