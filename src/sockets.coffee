@@ -46,7 +46,6 @@ module.exports.initialize = (io, app) ->
 
 		set: (attr, val) ->
 			if typeof attr is 'string'
-				console.log attr
 				@attributes[attr] = val
 				@socket.emit 'change', attr, val
 			else
@@ -59,12 +58,6 @@ module.exports.initialize = (io, app) ->
 
 		bindEvents: () =>
 			@socket.on 'disconnect', @disconnect
-
-		countConnections: (action, fn) =>
-			if @socket.handshake.admin
-				# console.log 'user is admin, connection count', @server.countConnections()
-				if action is 'get'
-					fn(@server.countConnections())
 
 		disconnect: () =>
 			@server = undefined

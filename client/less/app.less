@@ -1,4 +1,4 @@
-
+@import 'fonts.less';
 /* Colors */
 @black_border_dark: #4b4952;
 @black_border_light: #f8f8f8;
@@ -231,20 +231,23 @@ ul {
 				background: #666;
 				border-radius: 5px;
 				border-top: 1px solid @black_socket;
-				box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2), inset 0px 1px 2px rgba(0,0,0,0.5)
+				// box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2), inset 0px 1px 2px rgba(0,0,0,0.5)
 			}
 			#progress_bar {
-				height: 4px;
+				height: 6px;
 				position: absolute;
-				top: 5px;
+				top: 4px;
 				width: 0%;
 				cursor: pointer;
 				overflow: hidden;
-				background: url(/img/progress2.png);
-				border-radius: 3px;
+				-webkit-transition: width 1000ms linear;
+				transition: width 1000ms linear;
+				// background: url(/img/progress2.png);
+				border-radius: 4px;
 				//box-shadow: 0px 0px 6px 1px rgba(172, 0, 63, 0.8);
 				.grey_boxmodel_progress;
-				margin: 0px 2px;
+				margin: 0px 1px;
+				// box-shadow: 0px 0px 9px 1px #DF2F4F;
 			}
 		}
 		#extras {
@@ -518,6 +521,7 @@ aside.menu {
 
 /* Drop area */
 #drop_area {
+	margin-top: 25px;
 	height: 50px;
 	line-height: 50px;
 	border-radius: 6px;

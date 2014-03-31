@@ -35,24 +35,28 @@ app.get '/', (req, res) ->
 
 airplay = backboneio.createBackend()
 airplayDB = memoryStore airplay
-airplay.use airplayDB
-require('./airplay')(queue, queueDB)
+require('./airplay')(airplay, airplayDB)
+airplay.use airplayDB.middleware
 
 ###
 # Queue
 ###
 
 queue = backboneio.createBackend()
-queueDB = memoryStore queue
-queue.use queueDB
-require('./queue')(queue, queueDB)
+queueControl = require('./queue')(queue)
 
+###
+# Player
+###
+
+player = backboneio.createBackend()
+require('./player')(player, queueControl)
 
 ###
 # Socket setup
 ###
 
-io = backboneio.listen server, {airplay, queue}
+io = backboneio.listen server, {airplay, queue, player}
 sockets.initialize io, app
 sockets.server.on 'connection', (client) ->
 	client.spotify = new Spotify(sockets.server, client)

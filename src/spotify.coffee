@@ -1,6 +1,10 @@
-Spotify = require 'spotify-web'
+# Spotify = require 'spotify-web'
 lame = require 'lame'
 airtunes = require 'airtunes'
+Spotify = require './node-spotify-edge/lib/spotify'
+Speaker = require 'speaker'
+User = require './node-spotify-edge/lib/user'
+Connection = require './node-spotify-edge/lib/connection/connection'
 
 module.exports = class SpotifyClient
 
@@ -19,29 +23,50 @@ module.exports = class SpotifyClient
 				callback err.toString()
 			else
 				{@username, @password} = credentials
-				spotify.once 'login', () ->	@client.set 'username', spotify.username
-				callback()
-				spotify.disconnect()
-				@testPlay()
+				User.get spotify, @username, (err, user) =>
+					return @handleError err, spotify if err
+					# return spotify.disconnect() if err
+					user.get (err, user) =>
+						return @handleError err, spotify if err
+						@client.set 'username', user.fullName
+						callback()
+						spotify.disconnect()
 
 	login: (callback) ->
-		Spotify.login @username, @password, (err, spotify) ->
-			callback err, spotify
+		unless @username and @password
+			@client.socket.emit 'invalid-login'
+			callback new Error("No login credentials specified")
+		else
+			Spotify.login @username, @password, (err, spotify) ->
+				console.log err if err
+				callback err, spotify
 
 	handleError: (err, spotify) ->
 		@client.emit 'error', err
 		spotify.disconnect()
 
-	testPlay: () ->
+	getMetaData: (trackURI, callback) ->
+		@login (err, spotify) ->
+			spotify.get trackURI, (err, track) ->
+				spotify.disconnect()
+				callback err, track
+
+	userInfo: (username, callback) ->
+
+
+	play: (uri, callback, endCallback) ->
 		@login (err, spotify) =>
 			return @handleError(err, spotify) if err
 
-			spotify.get 'spotify:track:666elemQTQGi8xbjAAdIgB', (err, track) =>
+			spotify.get uri, (err, track) =>
 				return @handleError(err, spotify) if err
-				track.play()
+				stream = track.play()
 				.pipe new lame.Decoder()
-				.pipe airtunes
-				.on 'finish', () -> spotify.disconnect()
+				stream.pipe new Speaker()
+				.on 'finish', () -> 
+					spotify.disconnect()
+					endCallback()
+				callback(stream)
 
 
 

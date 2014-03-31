@@ -4,89 +4,28 @@
 <title>Mediaplayer v0.1.1</title>
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css" type="text/css" />
 <link rel="stylesheet" href="/css/app.css" type="text/css" />
-<script src="//code.jquery.com/jquery-2.1.0.js"></script>
-<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/js/bootstrap.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
+<script src="/js/vendor/requirejs/require.js"></script>
 </head>
 <body>
-	<div class="navbar navbar-fixed-top">
-	<div class="navbar-inner">
-		<div class="container-fluid">
-			<a class="brand" href="#"><span class="chrome">Chrome</span><span class="tunes">Tunes</span> <span class="version">v0.1.0</span></a>
-			<div class='screen bg'>
-				<div id="current_duration">
-					0:00 / 0:00
-				</div>
-				<div id="currently_playing">
-					Click a song to start playing
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="navbar-inner bottom">
-		<div class="container-fluid">
-			<div id="top_player">
-				<div id="controls">
-					<a href="#" class='prev'><img src="/img/prev.png" /></a>
-					<a href="#" class='play'><img src="/img/play.png" /></a>
-					<a href="#" class='pause'><img src="/img/pause.png" /></a>
-					<a href="#" class='next'><img src="/img/next.png" /></a>
-				</div>
-				<div id="extras">
-					<a href="#" class='shuffle_off'><img src="/img/shuffle_off.png" /></a>
-					<a href="#" class='shuffle_on'><img src="/img/shuffle_on.png" /></a>
-					<a href="#" class='repeat_off'><img src="/img/repeat_off.png" /></a>
-					<a href="#" class='repeat_on'><img src="/img/repeat_on.png" /></a>
-				</div>
-				<div id="progress">
-					<div id="progress_wrapper">
-						<div id="progress_background">
-						</div>
-						<div id="progress_bar">
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="navbar-edge">
-	</div>
+<div class="navbar navbar-fixed-top" id="player">
 </div>
 <div class="container-fluid">
 	<div class='row-fluid'>
 		<div class='span3'>
 			<div class='container-fluid'>
 				<div class='row-fluid'>
-					<aside class="menu span12" id="main_menu">
-						<div class="header artists"><span class="image playlist"></span>Artists<span class="count">0</span></div>
-						<div class="header albums"><span class="image playlist"></span>Albums<span class="count">0</span></div>
+					<aside class="menu span12" id="main-menu">
+						
+<!-- 						<div class="header albums"><span class="image playlist"></span>Albums<span class="count">0</span></div>
 						<div class="header genres"><span class="image playlist"></span>Genres<span class="count">0</span></div>
 						<div class="header playlists"><span class="image playlist"></span>Playlists<span class="count">0</span></div>
-						<div class="header"><span class="image playlist"></span>Friends<span class="count">0</span></div>
+						<div class="header"><span class="image playlist"></span>Friends<span class="count">0</span></div> -->
 					</aside>
-				</div>
-				<div class='row-fluid'>
-					<div id="drop_area">
-						DROP FILES HERE
-					</div>
 				</div>
 			</div>
 		</div>
-		<div class="main span9">
-			<table>
-				<thead>
-					<tr>
-						<th class="span1">Artist</th>
-						<th class="span2">Song</th>
-						<th class="span1">Duration</th>
-						<th class="span2">Album</th>
-						<th class="span2">Genre</th>
-						<th class="span1"></th>
-					</tr>
-				</thead>
-				<tbody id='list'>
-				</tbody>
-			</table>
+		<div id="main" class="main span9">
+
 		</div>
 	</div>
 </div>
@@ -111,6 +50,6 @@
 </div>
 <!-- END LOGIN BOX -->
 <audio controls id="audio" src=""></audio>
-<script src="/js/app.js"></script>
+<script src="/js/config.js"></script>
 </body>
 </html>
