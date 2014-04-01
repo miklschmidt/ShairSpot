@@ -9,7 +9,7 @@ module.exports.initialize = (io, app) ->
 			# 	io.enable('browser client minification')
 			# 	io.enable('browser client etag')
 			# 	io.enable('browser client gzip')
-			# 	io.set('log level', 1)
+			io.set('log level', 1)
 			# 	io.set 'transports', [
 			# 		'websocket'
 			# 		'htmlfile'

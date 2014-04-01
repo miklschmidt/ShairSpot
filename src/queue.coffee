@@ -7,10 +7,18 @@ module.exports = (backend, db) ->
 	id = 0
 	clientMap = {}
 
-	backend.use 'create', (req, res, next) ->
-		spotify = req.socket.store.data.client.spotify
-		spotify.getMetaData req.model.uri, (err, track) ->
+	createQ = []
+	createRunning = no
+
+	createNext = () ->
+		createRunning = yes
+		{req, res, next, spotify, uri} = createQ.shift()
+		spotify.getMetaData uri, (err, track) ->
 			if err
+				unless createQ.length
+					createRunning = no
+				else
+					createNext()
 				return next(err)
 			# TODO err handling
 			artists = (artist.name for artist in track.artist)
@@ -24,6 +32,15 @@ module.exports = (backend, db) ->
 			q.push req.model
 			clientMap[req.model.id] = req.socket.store.data.client
 			res.end req.model
+			unless createQ.length
+				createRunning = no
+			else
+				createNext()
+	backend.use 'create', (req, res, next) ->
+		spotify = req.socket.store.data.client.spotify
+		createQ.push {req, res, next, spotify, uri: req.model.uri}
+		process.nextTick createNext unless createRunning
+
 
 	backend.use 'read', (req, res, next) ->
 		if req.model.id

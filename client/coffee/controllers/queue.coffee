@@ -6,7 +6,8 @@ define [
 	'views/queue'
 	'views/devices'
 	'views/player'
-], ({Controller}, AirplayDeviceCollection, QueueCollection, PlayerCollection, QueueView, DevicesView, PlayerView) ->
+	'views/login'
+], ({Controller}, AirplayDeviceCollection, QueueCollection, PlayerCollection, QueueView, DevicesView, PlayerView, LoginView) ->
 
 	class QueueController extends Controller
 
@@ -34,3 +35,5 @@ define [
 				collection.fetch success: () =>
 					@model = collection.models[0] 
 					@view = new PlayerView {@model}
+
+			@reuse 'login', LoginView

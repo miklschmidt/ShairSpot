@@ -72,7 +72,11 @@ server.listen 1337
 console.log 'server running on port 1337'
 
 process.on 'uncaughtException', (err) ->
-	console.log 'UNCAUGHT', err
+	console.log 'UNCAUGHT'
+	console.log err
+	console.log err.stack
 
 airtunes.on 'error', (err) ->
-	console.log 'AIRTUNES ERROR:', err
+	console.log 'AIRTUNES ERROR' 
+	console.log err
+	console.log err.stack

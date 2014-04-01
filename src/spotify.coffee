@@ -26,8 +26,10 @@ module.exports = class SpotifyClient
 					return @handleError err, spotify, callback if err
 					# return @disconnect(spotify) if err
 					user.get (err, user) =>
+						console.log user
 						return @handleError err, spotify, callback if err
 						@client.set 'username', (user.fullName or user.username)
+						@client.set 'country', (user._spotify.user_info.country)
 						callback()
 						@disconnect(spotify)
 
@@ -72,19 +74,28 @@ module.exports = class SpotifyClient
 				try
 					spotify.get uri, (err, track) =>
 						return @handleError(err, spotify, endCallback) if err
-						try
-							stream = track.play()
-							.on 'error', (err) =>
-								@handleError(err, spotify, endCallback)
-							.pipe new lame.Decoder()
-							.on 'finish', () =>
-								stream.unpipe airtunes # prevent airtunes buffer from ending
-								@disconnect(spotify)
-								endCallback()
-							stream.pipe airtunes
-							callback(stream)
-						catch e
-							return @handleError(e, spotify, endCallback) if err
+						track.recurseAlternatives @client.get('country'), (err, track) =>
+							return @handleError(err, spotify, endCallback) if err
+							track.play (err, stream) =>
+								if err
+									# If we get an http error, try again.
+									console.log 'HTTP ERROR WHILE TRYING TO PLAY TRACK', uri
+									console.log err
+									@disconnect()
+									return @play uri, callback, endCallback
+								stream.on 'error', (err) =>
+									@handleError(err, spotify, endCallback)
+								lameStream = stream.pipe new lame.Decoder()
+								lameStream.on 'finish', () =>
+									if process.platform is 'darwin'
+										lameStream.unpipe airtunes # prevent airtunes buffer from ending
+									@disconnect(spotify)
+									endCallback()
+								if process.platform is 'darwin'
+									lameStream.pipe airtunes
+								if '--speaker' in process.argv or process.platform isnt 'darwin'
+									lameStream.pipe new Speaker()
+								callback(stream)
 				catch e
 					@play uri, callback, endCallback
 		catch e
