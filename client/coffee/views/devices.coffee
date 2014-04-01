@@ -16,3 +16,11 @@ define [
 			console.log @collection
 			@listenTo @collection, 'add', () ->
 				console.log 'yup collection add'
+
+			@listenTo @collection, 'add remove reset sync', () ->
+				@$('.header.devices .count').text @collection.length
+				@$('.header.devices span.icon').html ''
+
+			@delegate 'click', '.header.devices', () ->
+				@collection.fetch()
+				@$('.header.devices span.icon').html '<i class="icon-cycle spin"></i>'

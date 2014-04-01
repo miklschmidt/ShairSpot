@@ -37,7 +37,8 @@ module.exports.initialize = (io, app) ->
 
 	class SocketClient
 
-		attributes: {}
+		constructor: () ->
+			@attributes = {}
 
 		initialize: (@socket, @server) ->
 			@socket.join('users')
