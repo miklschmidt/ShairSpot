@@ -75,8 +75,11 @@ process.on 'uncaughtException', (err) ->
 	console.log 'UNCAUGHT'
 	console.log err
 	console.log err.stack
+	console.log err.type
+	if err.code is 'ENOTFOUND' or err.code is 'ECONNRESET'
+		process.nextTick () -> queueControl.createNext() if queueControl.hasItemsToCreate()
 
 airtunes.on 'error', (err) ->
-	console.log 'AIRTUNES ERROR' 
+	console.log 'AIRTUNES ERROR'
 	console.log err
 	console.log err.stack

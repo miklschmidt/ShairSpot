@@ -36,6 +36,7 @@ module.exports = (backend, db) ->
 				createRunning = no
 			else
 				createNext()
+
 	backend.use 'create', (req, res, next) ->
 		spotify = req.socket.store.data.client.spotify
 		createQ.push {req, res, next, spotify, uri: req.model.uri}
@@ -57,7 +58,7 @@ module.exports = (backend, db) ->
 
 	backend.use 'update', (req, res, next) ->
 		res.end new Error("not implemented yet")
-		
+
 	return {
 		getCurrent: () ->
 			console.log q
@@ -80,4 +81,9 @@ module.exports = (backend, db) ->
 			model.playing = true
 			backend.emit 'updated', model
 			return model
+
+		hasItemsToCreate: () ->
+			return createQ.length > 0
+
+		createNext
 	}
