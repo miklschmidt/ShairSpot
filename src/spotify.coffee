@@ -92,7 +92,13 @@ module.exports = class SpotifyClient
 									@disconnect(spotify)
 									endCallback()
 								if process.platform is 'darwin'
-									lameStream.pipe airtunes
+									airtunesStream = lameStream.pipe airtunes
+									airtunesStream.on 'error', (err) ->
+										console.log 'AIRTUNES PLAYBACK ERROR'
+										console.log err
+										console.log err.stack
+										airtunes.stopAll()
+										@endCallback()
 								if '--speaker' in process.argv or process.platform isnt 'darwin'
 									lameStream.pipe new Speaker()
 								callback(stream)
