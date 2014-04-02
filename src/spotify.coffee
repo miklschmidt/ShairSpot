@@ -92,7 +92,7 @@ module.exports = class SpotifyClient
 									@disconnect(spotify)
 									endCallback()
 								if process.platform is 'darwin'
-									airtunesStream = lameStream.pipe airtunes
+									lameStream.pipe airtunes
 								if '--speaker' in process.argv or process.platform isnt 'darwin'
 									lameStream.pipe new Speaker()
 								callback(stream)
