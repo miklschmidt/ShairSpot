@@ -129,7 +129,7 @@ Spotify.$provides = {'SpotifyConnection': 'connection'};
  */
 
 Object.defineProperty(Spotify.prototype, 'username', {
-  get: function() { 
+  get: function() {
     return this.user_info.user;
   },
   enumerable: true,
@@ -137,7 +137,7 @@ Object.defineProperty(Spotify.prototype, 'username', {
 });
 
 Object.defineProperty(Spotify.prototype, 'country', {
-  get: function() { 
+  get: function() {
     return this.user_info.country;
   },
   enumerable: true,
@@ -145,7 +145,7 @@ Object.defineProperty(Spotify.prototype, 'country', {
 });
 
 Object.defineProperty(Spotify.prototype, 'catalogue', {
-  get: function() { 
+  get: function() {
     return this.user_info.catalogue;
   },
   enumerable: true,
@@ -158,19 +158,19 @@ Object.defineProperty(Spotify.prototype, 'catalogue', {
  * @param {Object} obj
  * @param {Object} (Optional) parent
  * @return {Object}
- * @api private 
+ * @api private
  */
 Spotify.prototype._objectify = function(obj, parent) {
   if ('object' != typeof obj) return obj;
 
-  // TODO(adammw): convert bare uris to SpotifyUri types 
+  // TODO(adammw): convert bare uris to SpotifyUri types
   // (may not be needed if everything has it's own class that does that)
-  
+
   var exports = Spotify['$exports'];
 
   for (var i = 0, il = exports.length; i < il; i++) {
     var type = this[exports[i]];
-    
+
     // skip if it is already a type
     if (obj instanceof type) return obj;
 
@@ -249,7 +249,7 @@ Spotify.prototype.facebookLogin = function (fbuid, token, fn) {
 
 /**
  * Sets the login and error callbacks to invoke the specified callback function
- * 
+ *
  * @param {Function} fn callback function
  * @api private
  */
@@ -314,7 +314,7 @@ Spotify.prototype._onsecret = function (err, res) {
   for (var i = 0; i < scripts.length; i++) {
     var code = scripts.eq(i).text();
     if (~code.indexOf('Spotify.Web.Login')) {
-      vm.runInNewContext(code, { document: null, Spotify: { Web: { Login: login } } });
+      vm.runInNewContext(code, { document: null, Spotify: { Web: { Login: login, App: { initialize: function() {}} } } });
     }
   }
   debug('login CSRF token: %j, tracking ID: %j', args.csrftoken, args.trackingId);
@@ -486,7 +486,7 @@ Spotify.prototype.sendCommand = function (name, args, fn) {
 };
 
 /**
- * Makes a Protobuf request over the WebSocket connection. 
+ * Makes a Protobuf request over the WebSocket connection.
  * Also known as a MercuryRequest or Hermes Call.
  *
  * @param {Object} req protobuf request object
@@ -497,7 +497,7 @@ Spotify.prototype.sendCommand = function (name, args, fn) {
 Spotify.prototype.sendProtobufRequest = function(req, fn) {
   debug('sendProtobufRequest(%j)', req);
 
-  // extract request object 
+  // extract request object
   var isMultiGet = req.isMultiGet || false;
   var payload = req.payload || [];
   var header = {
@@ -648,7 +648,7 @@ Spotify.prototype.disconnect = function () {
  * with each object only populated with the URI. To get the metadata for the object, use the .get() or .metadata()
  * methods on the object.
  *
- * For backwards compatiblity, a callback function is also supported which automatically grabs the metadata before 
+ * For backwards compatiblity, a callback function is also supported which automatically grabs the metadata before
  * calling back with each new metadata object
  *
  * @param {Array|String} uris A single URI, or an Array of URIs to get "metadata" for
@@ -661,7 +661,7 @@ Spotify.prototype.disconnect = function () {
 Spotify.prototype.get =
 Spotify.prototype.metadata = function (uris, fn, loadMetadata) {
   debug('metadata(%j)', uris);
-  
+
   // convert input uris to array but save if we should return an array or a bare object
   var returnArray = Array.isArray(uris);
   if (!returnArray) uris = [uris];
@@ -774,14 +774,14 @@ Spotify.prototype.rootlist = function (user, from, length, fn) {
 
 /**
  * Retrieve suggested similar tracks to the given track URI
- * 
+ *
  * @param {String} uri track uri
  * @param {Function} fn callback function
  * @api public
  */
 
 Spotify.prototype.similar = function(uri, fn) {
-  debug('similar(%j)', uri);  
+  debug('similar(%j)', uri);
 
   var parts = uri.split(':');
   var type = parts[1];
