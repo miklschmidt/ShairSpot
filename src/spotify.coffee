@@ -74,28 +74,30 @@ module.exports = class SpotifyClient
 				try
 					spotify.get uri, (err, track) =>
 						return @handleError(err, spotify, endCallback) if err
-						track.recurseAlternatives @client.get('country'), (err, track) =>
-							return @handleError(err, spotify, endCallback) if err
-							track.play (err, stream) =>
-								if err
-									# If we get an http error, try again.
-									console.log 'HTTP ERROR WHILE TRYING TO PLAY TRACK', uri
-									console.log err
-									@disconnect()
-									return @play uri, callback, endCallback
-								stream.on 'error', (err) =>
-									@handleError(err, spotify, endCallback)
-								lameStream = stream.pipe new lame.Decoder()
+						track.play (err, stream) =>
+							if err
+								# If we get an http error, try again.
+								console.log 'HTTP ERROR WHILE TRYING TO PLAY TRACK', uri
+								console.log err
+								@disconnect()
+								return @play uri, callback, endCallback
+							stream.on 'error', (err) =>
+								@handleError(err, spotify, endCallback)
+							lameStream = stream.pipe new lame.Decoder()
+							if process.platform is 'darwin'
+								airStream = lameStream.pipe airtunes
 								lameStream.on 'finish', () =>
-									if process.platform is 'darwin'
-										lameStream.unpipe airtunes # prevent airtunes buffer from ending
+									lameStream.unpipe airtunes # prevent airtunes buffer from ending
+								unless '--speaker' in process.argv
+									airStream.on 'finish', () =>
+										@disconnect(spotify)
+										endCallback()
+							if '--speaker' in process.argv or process.platform isnt 'darwin'
+								lameStream.pipe new Speaker()
+								.on 'finish', () =>
 									@disconnect(spotify)
 									endCallback()
-								if process.platform is 'darwin'
-									lameStream.pipe airtunes
-								if '--speaker' in process.argv or process.platform isnt 'darwin'
-									lameStream.pipe new Speaker()
-								callback(stream)
+							callback(stream)
 				catch e
 					@play uri, callback, endCallback
 		catch e

@@ -279,7 +279,9 @@ Track.prototype.similar = function(fn) {
     device: 'web'
   }, function(err, res) {
     if (err) return fn(err);
-
+    if (!res.result) {
+      return fn(new Error("No resultset in respone"));
+    }
     // normalise response into Metadata objects
     var recommendations = res.result.stories.map(function(story) {
       var data = Object.create(null);

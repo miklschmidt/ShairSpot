@@ -18,7 +18,6 @@ module.exports = (backend, db) ->
 					device.deviceConnection = model.deviceConnection
 				unless device.active
 					device.active = false
-			console.log devices
 			db.setStore devices
 			next()
 
@@ -33,7 +32,6 @@ module.exports = (backend, db) ->
 	backend.use 'update', (req, res, next) ->
 		console.log 'airplay#update'
 		clientModel = req.model
-		console.log clientModel
 		model = db.getModel(clientModel.id)
 
 		model.timestamp = new Date().getTime()
@@ -43,7 +41,6 @@ module.exports = (backend, db) ->
 			deviceConnections[model.id] = airtunes.add model.host, {port: model.port, volume: clientModel.volume or 20}
 			model.active = yes
 			deviceConnections[model.id].on 'status', (status) ->
-				console.log status
 				if status is 'ready'
 					model.active = yes
 				else
@@ -51,7 +48,6 @@ module.exports = (backend, db) ->
 				backend.emit 'updated', model
 
 			deviceConnections[model.id].on 'error', (error) ->
-				console.log error
 				model.active = no
 				backend.emit 'updated', model
 

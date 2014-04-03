@@ -57,7 +57,7 @@ define [
 			cur = formatDuration @model.get('playtime') * 1000
 			total = formatDuration @model.get('track').duration
 			progress = (@model.get('playtime')*1000) / @model.get('track').duration
-			progress *= 100
+			progress = Math.ceil(progress * 100)
 			progress = 100 if progress > 100
 			@$('#play-progress .progress_bar').css('width', progress + '%')
 			@$('#current_duration').text "#{cur} / #{total}"

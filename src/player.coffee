@@ -14,30 +14,26 @@ module.exports = (player, queueControl) ->
 		constructor: (@playing = no) ->
 
 		play: () ->
-			if @currentStream
-				# We were paused.. Resume!
-				return @currentStream.play()
-			@track = queueControl.getCurrent()
-			console.log @track
-			if @track?
-				client = queueControl.getClientFor @track.id
-				queueControl.markAsPlaying(0)
-				@playing = yes
-				client.spotify.play @track.uri, (currentStream) =>
+			queueControl.getCurrent (@track) =>
+				if @track?
+					client = queueControl.getClientFor @track.id
+					queueControl.markAsPlaying(0)
+					@playing = yes
+					client.spotify.play @track.uri, (currentStream) =>
+						@playtime = 0
+						@playtimeInterval = setInterval () =>
+							@playtime++
+							player.emit 'updated', @serialize()
+						, 1000
+						@currentStream = currentStream
+					, () =>
+						clearInterval @playtimeInterval
+						@currentStream = null
+						@next()
+				else
+					@playing = no
 					@playtime = 0
-					@playtimeInterval = setInterval () =>
-						@playtime++
-						player.emit 'updated', @serialize()
-					, 1000
-					@currentStream = currentStream
-				, () =>
-					clearInterval @playtimeInterval
-					@currentStream = null
-					@next()
-			else
-				@playing = no
-				@playtime = 0
-				player.emit 'updated', @serialize()
+					player.emit 'updated', @serialize()
 
 		setVolume: (vol) =>
 			@volume = vol
@@ -48,7 +44,7 @@ module.exports = (player, queueControl) ->
 		stop: () ->
 			if @currentStream
 				@playing = no
-				@currentStream.end()
+				@currentStream.end() unless @currentStream.ended
 
 		next: () ->
 			queueControl.shift()
@@ -67,7 +63,6 @@ module.exports = (player, queueControl) ->
 		res.end audioPlayer.serialize()
 	player.use 'update', (req, res, next) ->
 		console.log 'player#update'
-		console.log req.model
 		if req.model.playing and not audioPlayer.playing
 			audioPlayer.play()
 		else if not req.model.playing and audioPlayer.playing
